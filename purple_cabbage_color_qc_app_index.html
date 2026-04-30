@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Purple Cabbage Color QC App</title>
+  <style>
+    :root {
+      --bg: #f6f3fb;
+      --card: #ffffff;
+      --primary: #6b2fb8;
+      --primary-dark: #4e1f8f;
+      --accent: #9b59d0;
+      --text: #232323;
+      --muted: #777;
+      --border: #e4d8ef;
+      --success: #1b8f5a;
+      --warn: #d18b00;
+      --danger: #d64545;
+      --shadow: 0 8px 24px rgba(80, 40, 120, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      background: linear-gradient(135deg, #3f176f, #8d4de8);
+      color: white;
+      padding: 24px 16px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      font-size: 14px;
+      opacity: 0.92;
+      line-height: 1.5;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: auto;
+      padding: 16px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+      color: var(--primary-dark);
+    }
+
+    h3 {
+      margin: 14px 0 8px;
+      font-size: 15px;
+      color: var(--primary-dark);
+    }
+
+    .camera-wrap {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      border-radius: 18px;
+      background: #111;
+      aspect-ratio: 4 / 3;
+    }
+
+    video, canvas {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    canvas {
+      display: none;
+    }
+
+    .target-box {
+      position: absolute;
+      width: 96px;
+      height: 96px;
+      border: 3px solid #fff;
+      border-radius: 18px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 0 9999px rgba(0,0,0,0.24);
+      pointer-events: none;
+    }
+
+    .target-dot {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: white;
+      border-radius: 50%;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .buttons.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 13px 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--primary);
+      color: white;
+    }
+
+    button.secondary {
+      background: #eee6f7;
+      color: var(--primary-dark);
+    }
+
+    button.success {
+      background: var(--success);
+    }
+
+    button.warn {
+      background: var(--warn);
+    }
+
+    button.danger {
+      background: var(--danger);
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      padding: 11px;
+      font-size: 15px;
+      background: white;
+      color: var(--text);
+    }
+
+    textarea {
+      min-height: 74px;
+      resize: vertical;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin: 10px 0 6px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .value-box {
+      background: #faf8fd;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 12px;
+      min-height: 70px;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .value {
+      font-size: 16px;
+      font-weight: 800;
+      word-break: break-word;
+    }
+
+    .small {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .status {
+      padding: 12px;
+      border-radius: 14px;
+      background: #f0e8ff;
+      color: var(--primary-dark);
+      font-size: 14px;
+      margin-top: 12px;
+      line-height: 1.5;
+    }
+
+    .color-preview {
+      height: 86px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: #ccc;
+      margin-bottom: 12px;
+    }
+
+    .qc-banner {
+      border-radius: 18px;
+      padding: 18px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 900;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+      background: #f7f7f7;
+    }
+
+    .qc-pass {
+      background: #e8f8f0;
+      color: var(--success);
+      border-color: #b8e8cf;
+    }
+
+    .qc-warning {
+      background: #fff5dd;
+      color: var(--warn);
+      border-color: #f1d28c;
+    }
+
+    .qc-fail {
+      background: #ffe9e9;
+      color: var(--danger);
+      border-color: #f2b5b5;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: #eee6f7;
+      color: var(--primary-dark);
+      font-size: 12px;
+      font-weight: 700;
+      margin: 2px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--primary-dark);
+      background: #faf8fd;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .check-item {
+      background: #faf8fd;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 9px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .check-item input {
+      width: auto;
+    }
+
+    .mini-note {
+      background: #fff;
+      border-left: 4px solid var(--primary);
+      padding: 10px 12px;
+      border-radius: 10px;
+      color: #444;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 720px) {
+      .grid, .grid.three, .buttons, .buttons.three, .checkbox-grid {
+        grid-template-columns: 1fr;
+      }
+
+      header h1 {
+        font-size: 19px;
+      }
+
+      .qc-banner {
+        font-size: 19px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Purple Cabbage Color QC App</h1>
+    <p>เว็บแอปวัดค่าสีน้ำต้มกะหล่ำปลีม่วงด้วยกล้องมือถือ พร้อม Calibration, Pseudo Absorbance, ΔE, Replicate, QC Pass/Fail และ Export CSV</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>1) กล้องวัดสี</h2>
+
+      <div class="camera-wrap">
+        <video id="video" autoplay playsinline></video>
+        <canvas id="canvas"></canvas>
+        <div class="target-box"></div>
+        <div class="target-dot"></div>
+      </div>
+
+      <div class="buttons">
+        <button onclick="startCamera()">Start Camera</button>
+        <button onclick="measureColor()" class="success">Measure 1 ครั้ง</button>
+        <button onclick="measureReplicates()" class="warn">Measure 3 Replicates</button>
+        <button onclick="switchCamera()" class="secondary">Switch Camera</button>
+        <button onclick="stopCamera()" class="danger">Stop Camera</button>
+        <button onclick="resetCurrent()" class="secondary">Reset Current</button>
+      </div>
+
+      <div class="status" id="cameraStatus">ยังไม่ได้เริ่มกล้อง</div>
+
+      <p class="small">
+        แอปอ่านค่าเฉลี่ยจากกรอบกลางภาพ เพื่อลดผลจาก noise และจุดสะท้อนแสง ควรวางตัวอย่างในภาชนะเดิม ระยะเดิม และใช้กล่องทึบแสง/ไฟตำแหน่งเดิมทุกครั้ง
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>2) Checklist ก่อนวัด</h2>
+      <div class="checkbox-grid">
+        <label class="check-item"><input type="checkbox" class="qcCheck"> ใช้กล่องทึบแสง</label>
+        <label class="check-item"><input type="checkbox" class="qcCheck"> ใช้ไฟตำแหน่งเดิม</label>
+        <label class="check-item"><input type="checkbox" class="qcCheck"> ใช้ภาชนะเดิม</label>
+        <label class="check-item"><input type="checkbox" class="qcCheck"> ระยะกล้องเท่าเดิม</label>
+        <label class="check-item"><input type="checkbox" class="qcCheck"> ไม่มีฟองหรือตะกอนชัดเจน</label>
+        <label class="check-item"><input type="checkbox" class="qcCheck"> ตัวอย่างอยู่กลางกรอบ</label>
+      </div>
+      <div class="status" id="checkStatus">Checklist: 0/6</div>
+    </section>
+
+    <section class="card">
+      <h2>3) Calibration / Standard</h2>
+
+      <div class="grid">
+        <div>
+          <h3>Blank Calibration</h3>
+          <p class="small">ใช้วัดน้ำเปล่า/blank เพื่อคำนวณ Pseudo Absorbance</p>
+          <button onclick="setBlank()" class="success">Set Current as Blank</button>
+          <div class="status" id="blankStatus">ยังไม่มีค่า Blank</div>
+        </div>
+
+        <div>
+          <h3>Standard Lot</h3>
+          <p class="small">ใช้ตั้งล็อตมาตรฐาน เพื่อเทียบ ΔE และ %Difference</p>
+          <button onclick="setStandard()" class="success">Set Current as Standard</button>
+          <div class="status" id="standardStatus">ยังไม่มีค่า Standard</div>
+        </div>
+      </div>
+
+      <div class="buttons">
+        <button onclick="clearBlank()" class="danger">Clear Blank</button>
+        <button onclick="clearStandard()" class="danger">Clear Standard</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>4) ตั้งค่า QC</h2>
+
+      <div class="grid three">
+        <div>
+          <label>Primary QC Mode</label>
+          <select id="qcMode" onchange="recalculateCurrent()">
+            <option value="deltaE">ΔE from Standard</option>
+            <option value="absBrightness">Pseudo Absorbance Brightness</option>
+            <option value="absR">Pseudo Absorbance Red</option>
+            <option value="absG">Pseudo Absorbance Green</option>
+            <option value="absB">Pseudo Absorbance Blue</option>
+            <option value="brightness">Brightness</option>
+            <option value="labL">LAB L*</option>
+            <option value="labA">LAB a*</option>
+            <option value="labB">LAB b*</option>
+          </select>
+        </div>
+
+        <div>
+          <label>PASS Threshold</label>
+          <input id="passThreshold" type="number" value="5" step="0.01" onchange="recalculateCurrent()">
+        </div>
+
+        <div>
+          <label>WARNING Threshold</label>
+          <input id="warnThreshold" type="number" value="10" step="0.01" onchange="recalculateCurrent()">
+        </div>
+      </div>
+
+      <p class="small">
+        ถ้าเลือก ΔE: PASS ≤ 5, WARNING ≤ 10, FAIL > 10 เป็นค่าเริ่มต้น  
+        ถ้าเลือก Absorbance หรือ Brightness ควรตั้งจากข้อมูลทดลองจริงของคุณ
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>5) ผลการวัด</h2>
+
+      <div id="qcBanner" class="qc-banner">ยังไม่มีผลการวัด</div>
+      <div class="color-preview" id="colorPreview"></div>
+
+      <div class="grid three">
+        <div class="value-box">
+          <div class="label">RGB</div>
+          <div class="value" id="rgbValue">-</div>
+        </div>
+
+        <div class="value-box">
+          <div class="label">HEX</div>
+          <div class="value" id="hexValue">-</div>
+        </div>
+
+        <div class="value-box">
+          <div class="label">HSL</div>
+          <div class="value" id="hslValue">-</div>
+        </div>
+
+        <div class="value-box">
+          <div class="label">HSV / HSB</div>
+          <div class="value" id="hsvValue">-</div>
+        </div>
+
+        <div class="value-box">
+          <div class="label">CMYK</div>
+          <div class="value" id="cmykValue">-</div>
+        </div>
+
+        <div class="value-box">
+          <div class="label">CIE XYZ</div>
+          <div class="value" id="xyzValue">-</div>
+        </div>
+
+        <div class="value-box">
+          <div class="label">CIE LAB</div>
+          <div class="value" id="labValue">-</div>
+        </div>
+
+        <div class="value-box">
+          <div class="label">Brightness</div>
+          <div class="value" id="brightnessValue">-</div>
+        </div>
+
+        <div class="value-box">
+          <div class="label">RGB Ratio</div>
+          <div class="value" id="ratioValue">-</div>
+        </div>
+
+        <div class="value-box">
+          <div class="label">Pseudo Absorbance</div>
+          <div class="value" id="absValue">-</div>
+        </div>
+
+        <div class="value-box">
+          <div class="label">ΔE / %Diff</div>
+          <div class="value" id="deltaValue">-</div>
+        </div>
+
+        <div class="value-box">
+          <div class="label">Replicate Avg / SD / %CV</div>
+          <div class="value" id="replicateValue">-</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>6) ข้อมูล Lot / Sample</h2>
+
+      <div class="grid three">
+        <div>
+          <label>Sample / Lot No.</label>
+          <input id="sampleName" placeholder="เช่น PC-001">
+        </div>
+        <div>
+          <label>น้ำหนักกะหล่ำปลี (g)</label>
+          <input id="cabbageWeight" type="number" step="0.01" placeholder="เช่น 100">
+        </div>
+        <div>
+          <label>ปริมาตรน้ำ (mL)</label>
+          <input id="waterVolume" type="number" step="0.01" placeholder="เช่น 500">
+        </div>
+        <div>
+          <label>เวลาต้ม (min)</label>
+          <input id="boilTime" type="number" step="0.01" placeholder="เช่น 10">
+        </div>
+        <div>
+          <label>pH</label>
+          <input id="phValue" type="number" step="0.01" placeholder="เช่น 6.2">
+        </div>
+        <div>
+          <label>Dilution</label>
+          <input id="dilution" placeholder="เช่น 1:1, 1:2, 1:5">
+        </div>
+        <div>
+          <label>ผู้เตรียม</label>
+          <input id="operator" placeholder="ชื่อผู้เตรียม">
+        </div>
+        <div>
+          <label>วันที่เตรียม</label>
+          <input id="prepDate" type="date">
+        </div>
+        <div>
+          <label>ภาชนะ/ตำแหน่งวัด</label>
+          <input id="vesselInfo" placeholder="เช่น cuvette / แก้วใส">
+        </div>
+      </div>
+
+      <label>หมายเหตุ</label>
+      <textarea id="notes" placeholder="เช่น สีเข้ม มีตะกอนเล็กน้อย ไม่มีฟอง"></textarea>
+
+      <div class="buttons">
+        <button onclick="saveMeasurement()" class="success">Save Result</button>
+        <button onclick="exportCSV()" class="secondary">Export CSV</button>
+        <button onclick="clearRecords()" class="danger">Clear Records</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>7) ตารางบันทึกผล</h2>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Sample</th>
+              <th>RGB</th>
+              <th>HEX</th>
+              <th>LAB</th>
+              <th>Abs</th>
+              <th>ΔE</th>
+              <th>%Diff</th>
+              <th>QC</th>
+              <th>%CV</th>
+              <th>Prep Info</th>
+            </tr>
+          </thead>
+          <tbody id="recordTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>คำแนะนำการใช้งานจริง</h2>
+      <div class="mini-note">
+        1) วัด Blank ก่อนทุกวันทดลอง  
+        2) วัด Standard Lot ก่อนเทียบล็อตอื่น  
+        3) ใช้ Measure 3 Replicates สำหรับข้อมูลที่ต้องการความน่าเชื่อถือ  
+        4) พยายามควบคุมแสง ระยะกล้อง ภาชนะ และปริมาตรตัวอย่างให้เหมือนเดิมทุกครั้ง  
+        5) สำหรับควบคุมความเข้มข้นเบื้องต้น ให้เริ่มจากเกณฑ์ ΔE ≤ 5 แล้วค่อยปรับจากข้อมูลจริง
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    let currentStream = null;
+    let useFrontCamera = false;
+    let currentResult = null;
+    let blankData = null;
+    let standardData = null;
+    let records = [];
+    let lastReplicateStats = null;
+
+    async function startCamera() {
+      try {
+        if (currentStream) stopCamera();
+
+        const constraints = {
+          video: {
+            facingMode: useFrontCamera ? "user" : "environment",
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          },
+          audio: false
+        };
+
+        currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+        video.srcObject = currentStream;
+
+        setStatus("cameraStatus", "กล้องพร้อมใช้งาน วางตัวอย่างไว้ในกรอบกลางภาพ แล้วกด Measure");
+      } catch (err) {
+        setStatus("cameraStatus", "ไม่สามารถเปิดกล้องได้: " + err.message);
+      }
+    }
+
+    function stopCamera() {
+      if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+        currentStream = null;
+        video.srcObject = null;
+        setStatus("cameraStatus", "ปิดกล้องแล้ว");
+      }
+    }
+
+    function switchCamera() {
+      useFrontCamera = !useFrontCamera;
+      startCamera();
+    }
+
+    function resetCurrent() {
+      currentResult = null;
+      lastReplicateStats = null;
+      document.getElementById("colorPreview").style.background = "#ccc";
+      document.getElementById("qcBanner").className = "qc-banner";
+      document.getElementById("qcBanner").innerText = "ยังไม่มีผลการวัด";
+      [
+        "rgbValue","hexValue","hslValue","hsvValue","cmykValue","xyzValue",
+        "labValue","brightnessValue","ratioValue","absValue","deltaValue","replicateValue"
+      ].forEach(id => document.getElementById(id).innerText = "-");
+      setStatus("cameraStatus", "Reset ค่าปัจจุบันแล้ว");
+    }
+
+    function setStatus(id, text) {
+      document.getElementById(id).innerText = text;
+    }
+
+    function captureAverageRgb() {
+      if (!video.videoWidth || !video.videoHeight) {
+        throw new Error("ยังไม่พบภาพจากกล้อง");
+      }
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      const boxSize = Math.round(Math.min(canvas.width, canvas.height) * 0.15);
+      const startX = Math.round((canvas.width - boxSize) / 2);
+      const startY = Math.round((canvas.height - boxSize) / 2);
+
+      const imageData = ctx.getImageData(startX, startY, boxSize, boxSize);
+      const data = imageData.data;
+
+      let rSum = 0, gSum = 0, bSum = 0;
+      let count = 0;
+
+      for (let i = 0; i < data.length; i += 4) {
+        rSum += data[i];
+        gSum += data[i + 1];
+        bSum += data[i + 2];
+        count++;
+      }
+
+      return {
+        r: Math.round(rSum / count),
+        g: Math.round(gSum / count),
+        b: Math.round(bSum / count)
+      };
+    }
+
+    function buildResultFromRgb(rgb) {
+      const { r, g, b } = rgb;
+      const hex = rgbToHex(r, g, b);
+      const hsl = rgbToHsl(r, g, b);
+      const hsv = rgbToHsv(r, g, b);
+      const cmyk = rgbToCmyk(r, g, b);
+      const xyz = rgbToXyz(r, g, b);
+      const lab = xyzToLab(xyz.x, xyz.y, xyz.z);
+      const brightness = getBrightness(r, g, b);
+      const ratio = getRgbRatio(r, g, b);
+
+      let abs = calculatePseudoAbsorbance({ r, g, b, brightness });
+      let deltaE = null;
+      let percentDiff = null;
+
+      if (standardData) {
+        deltaE = calculateDeltaE(lab, standardData.lab);
+        percentDiff = calculatePercentDiff(brightness, standardData.brightness);
+      }
+
+      return {
+        r, g, b, hex, hsl, hsv, cmyk, xyz, lab, brightness, ratio, abs, deltaE, percentDiff
+      };
+    }
+
+    function measureColor() {
+      try {
+        const rgb = captureAverageRgb();
+        currentResult = buildResultFromRgb(rgb);
+        lastReplicateStats = null;
+        updateUI();
+        setStatus("cameraStatus", "อ่านค่าสีสำเร็จจากพื้นที่กลางภาพ");
+      } catch (err) {
+        setStatus("cameraStatus", err.message);
+      }
+    }
+
+    async function measureReplicates() {
+      try {
+        const reps = [];
+        setStatus("cameraStatus", "กำลังวัดซ้ำ 3 ครั้ง...");
+
+        for (let i = 0; i < 3; i++) {
+          const rgb = captureAverageRgb();
+          const result = buildResultFromRgb(rgb);
+          reps.push(result);
+          await delay(450);
+        }
+
+        const avgRgb = {
+          r: Math.round(mean(reps.map(x => x.r))),
+          g: Math.round(mean(reps.map(x => x.g))),
+          b: Math.round(mean(reps.map(x => x.b)))
+        };
+
+        currentResult = buildResultFromRgb(avgRgb);
+
+        const qcValues = reps.map(x => getPrimaryQcValue(x)).filter(x => x !== null && !isNaN(x));
+        const avg = qcValues.length ? mean(qcValues) : null;
+        const sd = qcValues.length > 1 ? standardDeviation(qcValues) : null;
+        const cv = avg && sd !== null ? Math.abs(sd / avg) * 100 : null;
+
+        lastReplicateStats = {
+          n: reps.length,
+          avg,
+          sd,
+          cv,
+          values: qcValues
+        };
+
+        updateUI();
+        setStatus("cameraStatus", "วัดซ้ำ 3 ครั้งสำเร็จ และใช้ค่าเฉลี่ยเป็นผลปัจจุบัน");
+      } catch (err) {
+        setStatus("cameraStatus", err.message);
+      }
+    }
+
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function setBlank() {
+      if (!currentResult) {
+        alert("กรุณาวัดค่าสีก่อนตั้ง Blank");
+        return;
+      }
+
+      blankData = {
+        r: currentResult.r,
+        g: currentResult.g,
+        b: currentResult.b,
+        brightness: currentResult.brightness
+      };
+
+      localStorage.setItem("blankData", JSON.stringify(blankData));
+      updateBlankStatus();
+      recalculateCurrent();
+    }
+
+    function clearBlank() {
+      blankData = null;
+      localStorage.removeItem("blankData");
+      updateBlankStatus();
+      recalculateCurrent();
+    }
+
+    function setStandard() {
+      if (!currentResult) {
+        alert("กรุณาวัดค่าสีก่อนตั้ง Standard");
+        return;
+      }
+
+      standardData = {
+        r: currentResult.r,
+        g: currentResult.g,
+        b: currentResult.b,
+        hex: currentResult.hex,
+        lab: currentResult.lab,
+        brightness: currentResult.brightness,
+        abs: currentResult.abs
+      };
+
+      localStorage.setItem("standardData", JSON.stringify(standardData));
+      updateStandardStatus();
+      recalculateCurrent();
+    }
+
+    function clearStandard() {
+      standardData = null;
+      localStorage.removeItem("standardData");
+      updateStandardStatus();
+      recalculateCurrent();
+    }
+
+    function updateBlankStatus() {
+      if (!blankData) {
+        setStatus("blankStatus", "ยังไม่มีค่า Blank");
+        return;
+      }
+
+      setStatus(
+        "blankStatus",
+        `Blank: R ${blankData.r}, G ${blankData.g}, B ${blankData.b}, Brightness ${blankData.brightness.toFixed(2)}`
+      );
+    }
+
+    function updateStandardStatus() {
+      if (!standardData) {
+        setStatus("standardStatus", "ยังไม่มีค่า Standard");
+        return;
+      }
+
+      setStatus(
+        "standardStatus",
+        `Standard: ${standardData.hex}, L* ${standardData.lab.l.toFixed(2)}, a* ${standardData.lab.a.toFixed(2)}, b* ${standardData.lab.b.toFixed(2)}`
+      );
+    }
+
+    function recalculateCurrent() {
+      if (!currentResult) return;
+
+      currentResult = buildResultFromRgb({
+        r: currentResult.r,
+        g: currentResult.g,
+        b: currentResult.b
+      });
+
+      updateUI();
+    }
+
+    function calculatePseudoAbsorbance(sample) {
+      if (!blankData) {
+        return {
+          r: null, g: null, b: null, brightness: null
+        };
+      }
+
+      return {
+        r: pseudoAbs(sample.r, blankData.r),
+        g: pseudoAbs(sample.g, blankData.g),
+        b: pseudoAbs(sample.b, blankData.b),
+        brightness: pseudoAbs(sample.brightness, blankData.brightness)
+      };
+    }
+
+    function pseudoAbs(sampleI, blankI) {
+      const s = Math.max(Number(sampleI), 1);
+      const bl = Math.max(Number(blankI), 1);
+      const ratio = Math.min(Math.max(s / bl, 0.0001), 10);
+      return -Math.log10(ratio);
+    }
+
+    function calculatePercentDiff(sample, standard) {
+      if (!standard || standard === 0) return null;
+      return ((sample - standard) / standard) * 100;
+    }
+
+    function getPrimaryQcValue(result = currentResult) {
+      if (!result) return null;
+
+      const mode = document.getElementById("qcMode").value;
+
+      switch (mode) {
+        case "deltaE": return result.deltaE;
+        case "absBrightness": return result.abs.brightness;
+        case "absR": return result.abs.r;
+        case "absG": return result.abs.g;
+        case "absB": return result.abs.b;
+        case "brightness": return result.brightness;
+        case "labL": return result.lab.l;
+        case "labA": return result.lab.a;
+        case "labB": return result.lab.b;
+        default: return null;
+      }
+    }
+
+    function evaluateQC() {
+      const value = getPrimaryQcValue(currentResult);
+      const mode = document.getElementById("qcMode").value;
+      const pass = Number(document.getElementById("passThreshold").value);
+      const warn = Number(document.getElementById("warnThreshold").value);
+
+      if (value === null || isNaN(value)) {
+        return {
+          label: "ยังประเมิน QC ไม่ได้",
+          className: "qc-banner",
+          value: null,
+          mode
+        };
+      }
+
+      if (mode === "deltaE") {
+        if (value <= pass) return { label: "PASS", className: "qc-banner qc-pass", value, mode };
+        if (value <= warn) return { label: "WARNING", className: "qc-banner qc-warning", value, mode };
+        return { label: "FAIL", className: "qc-banner qc-fail", value, mode };
+      }
+
+      if (standardData) {
+        const standardValue = getStandardValueByMode(mode);
+        const diff = standardValue === null ? null : Math.abs(calculatePercentDiff(value, standardValue));
+
+        if (diff !== null && !isNaN(diff)) {
+          if (diff <= pass) return { label: "PASS", className: "qc-banner qc-pass", value, mode, diff };
+          if (diff <= warn) return { label: "WARNING", className: "qc-banner qc-warning", value, mode, diff };
+          return { label: "FAIL", className: "qc-banner qc-fail", value, mode, diff };
+        }
+      }
+
+      if (value <= pass) return { label: "PASS", className: "qc-banner qc-pass", value, mode };
+      if (value <= warn) return { label: "WARNING", className: "qc-banner qc-warning", value, mode };
+      return { label: "FAIL", className: "qc-banner qc-fail", value, mode };
+    }
+
+    function getStandardValueByMode(mode) {
+      if (!standardData) return null;
+
+      switch (mode) {
+        case "brightness": return standardData.brightness;
+        case "labL": return standardData.lab.l;
+        case "labA": return standardData.lab.a;
+        case "labB": return standardData.lab.b;
+        case "absBrightness": return standardData.abs ? standardData.abs.brightness : null;
+        case "absR": return standardData.abs ? standardData.abs.r : null;
+        case "absG": return standardData.abs ? standardData.abs.g : null;
+        case "absB": return standardData.abs ? standardData.abs.b : null;
+        default: return null;
+      }
+    }
+
+    function updateUI() {
+      if (!currentResult) return;
+
+      const result = currentResult;
+
+      document.getElementById("colorPreview").style.background = result.hex;
+      document.getElementById("rgbValue").innerText = `R ${result.r}, G ${result.g}, B ${result.b}`;
+      document.getElementById("hexValue").innerText = result.hex;
+      document.getElementById("hslValue").innerText = `H ${result.hsl.h}°, S ${result.hsl.s}%, L ${result.hsl.l}%`;
+      document.getElementById("hsvValue").innerText = `H ${result.hsv.h}°, S ${result.hsv.s}%, V ${result.hsv.v}%`;
+      document.getElementById("cmykValue").innerText = `C ${result.cmyk.c}%, M ${result.cmyk.m}%, Y ${result.cmyk.y}%, K ${result.cmyk.k}%`;
+      document.getElementById("xyzValue").innerText = `X ${result.xyz.x.toFixed(2)}, Y ${result.xyz.y.toFixed(2)}, Z ${result.xyz.z.toFixed(2)}`;
+      document.getElementById("labValue").innerText = `L* ${result.lab.l.toFixed(2)}, a* ${result.lab.a.toFixed(2)}, b* ${result.lab.b.toFixed(2)}`;
+      document.getElementById("brightnessValue").innerText = `${result.brightness.toFixed(2)} / 255`;
+      document.getElementById("ratioValue").innerText =
+        `R ${(result.ratio.rRatio * 100).toFixed(1)}%, G ${(result.ratio.gRatio * 100).toFixed(1)}%, B ${(result.ratio.bRatio * 100).toFixed(1)}%`;
+
+      if (!blankData) {
+        document.getElementById("absValue").innerText = "ยังไม่ได้ตั้ง Blank";
+      } else {
+        document.getElementById("absValue").innerText =
+          `A_R ${formatMaybe(result.abs.r)}, A_G ${formatMaybe(result.abs.g)}, A_B ${formatMaybe(result.abs.b)}, A_Bri ${formatMaybe(result.abs.brightness)}`;
+      }
+
+      const deltaText = [
+        result.deltaE === null ? "ΔE: ยังไม่มี Standard" : `ΔE: ${result.deltaE.toFixed(2)}`,
+        result.percentDiff === null ? "%Diff: -" : `%Diff Brightness: ${result.percentDiff.toFixed(2)}%`
+      ].join(" | ");
+      document.getElementById("deltaValue").innerText = deltaText;
+
+      if (!lastReplicateStats) {
+        document.getElementById("replicateValue").innerText = "ยังไม่ได้วัดซ้ำ";
+      } else {
+        document.getElementById("replicateValue").innerText =
+          `n=${lastReplicateStats.n}, Avg ${formatMaybe(lastReplicateStats.avg)}, SD ${formatMaybe(lastReplicateStats.sd)}, CV ${formatMaybe(lastReplicateStats.cv)}%`;
+      }
+
+      const qc = evaluateQC();
+      const banner = document.getElementById("qcBanner");
+      banner.className = qc.className;
+
+      let qcText = qc.label;
+      if (qc.value !== null) qcText += ` | ${qc.mode}: ${qc.value.toFixed(3)}`;
+      if (qc.diff !== undefined) qcText += ` | Diff ${qc.diff.toFixed(2)}%`;
+      banner.innerText = qcText;
+    }
+
+    function formatMaybe(value) {
+      if (value === null || value === undefined || isNaN(value)) return "-";
+      return Number(value).toFixed(3);
+    }
+
+    function saveMeasurement() {
+      if (!currentResult) {
+        alert("กรุณาวัดค่าสีก่อนบันทึก");
+        return;
+      }
+
+      const qc = evaluateQC();
+
+      const record = {
+        time: new Date().toLocaleString(),
+        sample: val("sampleName") || "Unnamed Sample",
+        rgb: `R${currentResult.r} G${currentResult.g} B${currentResult.b}`,
+        hex: currentResult.hex,
+        lab: `L${currentResult.lab.l.toFixed(2)} a${currentResult.lab.a.toFixed(2)} b${currentResult.lab.b.toFixed(2)}`,
+        absBrightness: currentResult.abs.brightness === null ? "" : currentResult.abs.brightness.toFixed(4),
+        absR: currentResult.abs.r === null ? "" : currentResult.abs.r.toFixed(4),
+        absG: currentResult.abs.g === null ? "" : currentResult.abs.g.toFixed(4),
+        absB: currentResult.abs.b === null ? "" : currentResult.abs.b.toFixed(4),
+        deltaE: currentResult.deltaE === null ? "" : currentResult.deltaE.toFixed(3),
+        percentDiff: currentResult.percentDiff === null ? "" : currentResult.percentDiff.toFixed(3),
+        qc: qc.label,
+        cv: lastReplicateStats && lastReplicateStats.cv !== null ? lastReplicateStats.cv.toFixed(3) : "",
+        cabbageWeight: val("cabbageWeight"),
+        waterVolume: val("waterVolume"),
+        boilTime: val("boilTime"),
+        phValue: val("phValue"),
+        dilution: val("dilution"),
+        operator: val("operator"),
+        prepDate: val("prepDate"),
+        vesselInfo: val("vesselInfo"),
+        notes: val("notes")
+      };
+
+      records.push(record);
+      localStorage.setItem("records", JSON.stringify(records));
+      renderRecords();
+
+      setStatus("cameraStatus", "บันทึกผลเรียบร้อย");
+    }
+
+    function val(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    function renderRecords() {
+      const tbody = document.getElementById("recordTable");
+      tbody.innerHTML = "";
+
+      records.forEach(record => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${escapeHtml(record.time)}</td>
+          <td>${escapeHtml(record.sample)}</td>
+          <td>${escapeHtml(record.rgb)}</td>
+          <td>${escapeHtml(record.hex)}</td>
+          <td>${escapeHtml(record.lab)}</td>
+          <td>Bri ${escapeHtml(record.absBrightness)}<br>R ${escapeHtml(record.absR)} G ${escapeHtml(record.absG)} B ${escapeHtml(record.absB)}</td>
+          <td>${escapeHtml(record.deltaE)}</td>
+          <td>${escapeHtml(record.percentDiff)}</td>
+          <td>${escapeHtml(record.qc)}</td>
+          <td>${escapeHtml(record.cv)}</td>
+          <td>
+            Cab ${escapeHtml(record.cabbageWeight)}g / Water ${escapeHtml(record.waterVolume)}mL<br>
+            Boil ${escapeHtml(record.boilTime)}min / pH ${escapeHtml(record.phValue)}<br>
+            Dilution ${escapeHtml(record.dilution)}<br>
+            Prep ${escapeHtml(record.prepDate)} / By ${escapeHtml(record.operator)}<br>
+            Vessel ${escapeHtml(record.vesselInfo)}<br>
+            ${escapeHtml(record.notes)}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function exportCSV() {
+      if (records.length === 0) {
+        alert("ยังไม่มีข้อมูลสำหรับ Export");
+        return;
+      }
+
+      const header = [
+        "Time","Sample","RGB","HEX","LAB","AbsBrightness","AbsR","AbsG","AbsB",
+        "DeltaE","PercentDiffBrightness","QC","CV",
+        "CabbageWeight_g","WaterVolume_mL","BoilTime_min","pH","Dilution",
+        "Operator","PrepDate","VesselInfo","Notes"
+      ];
+
+      const rows = records.map(r => [
+        r.time, r.sample, r.rgb, r.hex, r.lab, r.absBrightness, r.absR, r.absG, r.absB,
+        r.deltaE, r.percentDiff, r.qc, r.cv, r.cabbageWeight, r.waterVolume,
+        r.boilTime, r.phValue, r.dilution, r.operator, r.prepDate, r.vesselInfo, r.notes
+      ]);
+
+      const csv = [header, ...rows]
+        .map(row => row.map(value => `"${String(value || "").replaceAll('"', '""')}"`).join(","))
+        .join("\n");
+
+      const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "purple_cabbage_color_qc_records.csv";
+      link.click();
+
+      URL.revokeObjectURL(url);
+    }
+
+    function clearRecords() {
+      if (!confirm("ต้องการลบข้อมูลที่บันทึกทั้งหมดใช่ไหม?")) return;
+      records = [];
+      localStorage.removeItem("records");
+      renderRecords();
+    }
+
+    function rgbToHex(r, g, b) {
+      return "#" + [r, g, b].map(x => x.toString(16).padStart(2, "0")).join("").toUpperCase();
+    }
+
+    function rgbToHsl(r, g, b) {
+      r /= 255; g /= 255; b /= 255;
+
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      let h = 0, s = 0;
+      const l = (max + min) / 2;
+
+      if (max !== min) {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+        if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+        else if (max === g) h = (b - r) / d + 2;
+        else h = (r - g) / d + 4;
+
+        h /= 6;
+      }
+
+      return {
+        h: Math.round(h * 360),
+        s: Math.round(s * 100),
+        l: Math.round(l * 100)
+      };
+    }
+
+    function rgbToHsv(r, g, b) {
+      r /= 255; g /= 255; b /= 255;
+
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      const d = max - min;
+      let h = 0;
+
+      if (d !== 0) {
+        if (max === r) h = 60 * (((g - b) / d) % 6);
+        else if (max === g) h = 60 * (((b - r) / d) + 2);
+        else h = 60 * (((r - g) / d) + 4);
+      }
+
+      if (h < 0) h += 360;
+
+      return {
+        h: Math.round(h),
+        s: Math.round((max === 0 ? 0 : d / max) * 100),
+        v: Math.round(max * 100)
+      };
+    }
+
+    function rgbToCmyk(r, g, b) {
+      if (r === 0 && g === 0 && b === 0) return { c: 0, m: 0, y: 0, k: 100 };
+
+      const rp = r / 255;
+      const gp = g / 255;
+      const bp = b / 255;
+
+      const k = 1 - Math.max(rp, gp, bp);
+      const c = (1 - rp - k) / (1 - k);
+      const m = (1 - gp - k) / (1 - k);
+      const y = (1 - bp - k) / (1 - k);
+
+      return {
+        c: Math.round(c * 100),
+        m: Math.round(m * 100),
+        y: Math.round(y * 100),
+        k: Math.round(k * 100)
+      };
+    }
+
+    function rgbToXyz(r, g, b) {
+      let rp = r / 255;
+      let gp = g / 255;
+      let bp = b / 255;
+
+      rp = rp > 0.04045 ? Math.pow((rp + 0.055) / 1.055, 2.4) : rp / 12.92;
+      gp = gp > 0.04045 ? Math.pow((gp + 0.055) / 1.055, 2.4) : gp / 12.92;
+      bp = bp > 0.04045 ? Math.pow((bp + 0.055) / 1.055, 2.4) : bp / 12.92;
+
+      rp *= 100; gp *= 100; bp *= 100;
+
+      return {
+        x: rp * 0.4124 + gp * 0.3576 + bp * 0.1805,
+        y: rp * 0.2126 + gp * 0.7152 + bp * 0.0722,
+        z: rp * 0.0193 + gp * 0.1192 + bp * 0.9505
+      };
+    }
+
+    function xyzToLab(x, y, z) {
+      const refX = 95.047;
+      const refY = 100.000;
+      const refZ = 108.883;
+
+      x /= refX; y /= refY; z /= refZ;
+
+      x = x > 0.008856 ? Math.cbrt(x) : (7.787 * x) + (16 / 116);
+      y = y > 0.008856 ? Math.cbrt(y) : (7.787 * y) + (16 / 116);
+      z = z > 0.008856 ? Math.cbrt(z) : (7.787 * z) + (16 / 116);
+
+      return {
+        l: (116 * y) - 16,
+        a: 500 * (x - y),
+        b: 200 * (y - z)
+      };
+    }
+
+    function calculateDeltaE(lab1, lab2) {
+      const dl = lab1.l - lab2.l;
+      const da = lab1.a - lab2.a;
+      const db = lab1.b - lab2.b;
+      return Math.sqrt(dl * dl + da * da + db * db);
+    }
+
+    function getBrightness(r, g, b) {
+      return 0.299 * r + 0.587 * g + 0.114 * b;
+    }
+
+    function getRgbRatio(r, g, b) {
+      const total = r + g + b;
+      if (total === 0) return { rRatio: 0, gRatio: 0, bRatio: 0 };
+
+      return {
+        rRatio: r / total,
+        gRatio: g / total,
+        bRatio: b / total
+      };
+    }
+
+    function mean(values) {
+      return values.reduce((a, b) => a + b, 0) / values.length;
+    }
+
+    function standardDeviation(values) {
+      const avg = mean(values);
+      const variance = values.reduce((sum, value) => sum + Math.pow(value - avg, 2), 0) / (values.length - 1);
+      return Math.sqrt(variance);
+    }
+
+    function escapeHtml(text) {
+      return String(text || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    document.querySelectorAll(".qcCheck").forEach(cb => {
+      cb.addEventListener("change", () => {
+        const checks = document.querySelectorAll(".qcCheck");
+        const checked = Array.from(checks).filter(x => x.checked).length;
+        setStatus("checkStatus", `Checklist: ${checked}/${checks.length}`);
+      });
+    });
+
+    window.onload = function() {
+      const savedBlank = localStorage.getItem("blankData");
+      if (savedBlank) blankData = JSON.parse(savedBlank);
+
+      const savedStandard = localStorage.getItem("standardData");
+      if (savedStandard) standardData = JSON.parse(savedStandard);
+
+      const savedRecords = localStorage.getItem("records");
+      if (savedRecords) records = JSON.parse(savedRecords);
+
+      updateBlankStatus();
+      updateStandardStatus();
+      renderRecords();
+
+      const today = new Date().toISOString().slice(0, 10);
+      document.getElementById("prepDate").value = today;
+    };
+  </script>
+</body>
+</html>
